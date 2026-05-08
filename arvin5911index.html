@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Arvin App</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      margin: 0;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-top: 40px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 40px;
+    }
+
+    .header p {
+      margin: 5px 0 20px;
+      opacity: 0.8;
+    }
+
+    .app {
+      background: white;
+      padding: 25px;
+      width: 320px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    input {
+      width: 70%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 10px;
+      border: none;
+      background: #667eea;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #5a67d8;
+    }
+
+    li {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      background: #f4f4f4;
+      padding: 8px;
+      border-radius: 5px;
+    }
+
+    .delete {
+      background: red;
+      color: white;
+      border: none;
+      padding: 5px 8px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <h1>Arvin</h1>
+    <p>Beginner Developer 🚀</p>
+  </div>
+
+  <div class="app">
+
+    <h2>To-Do List</h2>
+
+    <input id="taskInput" type="text" placeholder="Enter task">
+    <button onclick="addTask()">Add</button>
+
+    <ul id="taskList"></ul>
+
+  </div>
+
+  <script>
+    // Load saved tasks
+    window.onload = function () {
+      let saved = JSON.parse(localStorage.getItem("tasks")) || [];
+      saved.forEach(task => createTask(task));
+    };
+
+    function addTask() {
+      let input = document.getElementById("taskInput");
+      let task = input.value.trim();
+
+      if (task === "") return;
+
+      createTask(task);
+      saveTask(task);
+
+      input.value = "";
+    }
+
+    function createTask(task) {
+      let li = document.createElement("li");
+
+      li.innerHTML = `
+        ${task}
+        <button class="delete" onclick="deleteTask(this, '${task}')">X</button>
+      `;
+
+      document.getElementById("taskList").appendChild(li);
+    }
+
+    function deleteTask(btn, task) {
+      btn.parentElement.remove();
+
+      let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      tasks = tasks.filter(t => t !== task);
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+
+    function saveTask(task) {
+      let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      tasks.push(task);
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+  </script>
+
+</body>
+</html>
