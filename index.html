@@ -36,6 +36,7 @@
       width: 320px;
       border-radius: 15px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      margin-bottom: 20px;
     }
 
     input {
@@ -43,6 +44,7 @@
       padding: 10px;
       border: 1px solid #ddd;
       border-radius: 5px;
+      margin-top: 10px;
     }
 
     button {
@@ -52,6 +54,7 @@
       color: white;
       border-radius: 5px;
       cursor: pointer;
+      margin-top: 10px;
     }
 
     button:hover {
@@ -75,6 +78,11 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
+    .calc-buttons button {
+      width: 60px;
+      margin-right: 5px;
+    }
   </style>
 </head>
 
@@ -83,9 +91,10 @@
   <div class="header">
     <h1>Arvin</h1>
     <img src="photo.jpg" width="150">
-   <p>Randhir maan 🚀</p>
+    <p>Randhir maan 🚀</p>
   </div>
 
+  <!-- TO DO APP -->
   <div class="app">
 
     <h2>To-Do List</h2>
@@ -97,13 +106,34 @@
 
   </div>
 
+  <!-- CALCULATOR -->
+  <div class="app">
+
+    <h2>Calculator</h2>
+
+    <input id="num1" type="number" placeholder="First number">
+    <input id="num2" type="number" placeholder="Second number">
+
+    <div class="calc-buttons">
+      <button onclick="calculate('+')">+</button>
+      <button onclick="calculate('-')">-</button>
+      <button onclick="calculate('*')">*</button>
+      <button onclick="calculate('/')">/</button>
+    </div>
+
+    <h3 id="result">Result: 0</h3>
+
+  </div>
+
   <script>
-    // Load saved tasks
+
+    // LOAD SAVED TASKS
     window.onload = function () {
       let saved = JSON.parse(localStorage.getItem("tasks")) || [];
       saved.forEach(task => createTask(task));
     };
 
+    // ADD TASK
     function addTask() {
       let input = document.getElementById("taskInput");
       let task = input.value.trim();
@@ -116,6 +146,7 @@
       input.value = "";
     }
 
+    // CREATE TASK
     function createTask(task) {
       let li = document.createElement("li");
 
@@ -127,19 +158,53 @@
       document.getElementById("taskList").appendChild(li);
     }
 
+    // DELETE TASK
     function deleteTask(btn, task) {
       btn.parentElement.remove();
 
       let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
       tasks = tasks.filter(t => t !== task);
+
       localStorage.setItem("tasks", JSON.stringify(tasks));
     }
 
+    // SAVE TASK
     function saveTask(task) {
       let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
       tasks.push(task);
+
       localStorage.setItem("tasks", JSON.stringify(tasks));
     }
+
+    // CALCULATOR
+    function calculate(operator) {
+
+      let num1 = Number(document.getElementById("num1").value);
+      let num2 = Number(document.getElementById("num2").value);
+
+      let result = 0;
+
+      if (operator === "+") {
+        result = num1 + num2;
+      }
+
+      else if (operator === "-") {
+        result = num1 - num2;
+      }
+
+      else if (operator === "*") {
+        result = num1 * num2;
+      }
+
+      else if (operator === "/") {
+        result = num2 !== 0 ? num1 / num2 : "Cannot divide by 0";
+      }
+
+      document.getElementById("result").innerText =
+        "Result: " + result;
+    }
+
   </script>
 
 </body>
