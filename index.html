@@ -1,12 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Arvin App</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arvin Dashboard</title>
 
   <style>
+
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       margin: 0;
+      padding: 20px;
       background: linear-gradient(135deg, #667eea, #764ba2);
       display: flex;
       flex-direction: column;
@@ -17,72 +21,90 @@
     .header {
       text-align: center;
       color: white;
-      margin-top: 40px;
+      margin-bottom: 20px;
     }
 
     .header h1 {
-      margin: 0;
-      font-size: 40px;
+      margin: 10px 0 5px;
+      font-size: 42px;
     }
 
     .header p {
-      margin: 5px 0 20px;
-      opacity: 0.8;
+      margin: 0;
+      opacity: 0.9;
+    }
+
+    .header img {
+      width: 150px;
+      border-radius: 50%;
+      margin-top: 10px;
+      border: 4px solid white;
     }
 
     .app {
       background: white;
+      width: 340px;
       padding: 25px;
-      width: 320px;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      border-radius: 16px;
       margin-bottom: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #333;
     }
 
     input {
-      width: 70%;
+      width: 92%;
       padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
       margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
     }
 
     button {
-      padding: 10px;
+      margin-top: 10px;
+      padding: 10px 15px;
       border: none;
+      border-radius: 6px;
       background: #667eea;
       color: white;
-      border-radius: 5px;
       cursor: pointer;
-      margin-top: 10px;
+      font-size: 14px;
     }
 
     button:hover {
       background: #5a67d8;
     }
 
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
     li {
       margin-top: 10px;
+      background: #f4f4f4;
+      padding: 10px;
+      border-radius: 6px;
       display: flex;
       justify-content: space-between;
-      background: #f4f4f4;
-      padding: 8px;
-      border-radius: 5px;
+      align-items: center;
     }
 
     .delete {
       background: red;
-      color: white;
-      border: none;
-      padding: 5px 8px;
-      border-radius: 5px;
-      cursor: pointer;
+      padding: 5px 10px;
+      font-size: 12px;
     }
 
     .calc-buttons button {
       width: 60px;
       margin-right: 5px;
     }
+
   </style>
 </head>
 
@@ -90,17 +112,21 @@
 
   <div class="header">
     <h1>Arvin</h1>
-    <img src="photo.jpg" width="150">
+
+    <!-- Put your image file in GitHub and name it photo.jpg -->
+    <img src="photo.jpg" alt="Profile Photo">
+
     <p>Randhir maan 🚀</p>
   </div>
 
-  <!-- TO DO APP -->
+  <!-- TO DO LIST -->
   <div class="app">
 
     <h2>To-Do List</h2>
 
     <input id="taskInput" type="text" placeholder="Enter task">
-    <button onclick="addTask()">Add</button>
+
+    <button onclick="addTask()">Add Task</button>
 
     <ul id="taskList"></ul>
 
@@ -112,6 +138,7 @@
     <h2>Calculator</h2>
 
     <input id="num1" type="number" placeholder="First number">
+
     <input id="num2" type="number" placeholder="Second number">
 
     <div class="calc-buttons">
@@ -125,63 +152,121 @@
 
   </div>
 
+  <!-- EXPENSE TRACKER -->
+  <div class="app">
+
+    <h2>Expense Tracker</h2>
+
+    <input id="expenseName" type="text" placeholder="Expense name">
+
+    <input id="expenseAmount" type="number" placeholder="Amount (£)">
+
+    <button onclick="addExpense()">Add Expense</button>
+
+    <ul id="expenseList"></ul>
+
+    <h3 id="totalExpense">Total Expenses: £0</h3>
+
+  </div>
+
+  <!-- INVESTMENT TRACKER -->
+  <div class="app">
+
+    <h2>Investment Tracker</h2>
+
+    <input id="investmentName" type="text" placeholder="Investment name">
+
+    <input id="investmentAmount" type="number" placeholder="Amount invested (£)">
+
+    <button onclick="addInvestment()">Add Investment</button>
+
+    <ul id="investmentList"></ul>
+
+    <h3 id="totalInvestment">Total Invested: £0</h3>
+
+  </div>
+
   <script>
 
-    // LOAD SAVED TASKS
+    // ---------------- TO DO LIST ----------------
+
     window.onload = function () {
-      let saved = JSON.parse(localStorage.getItem("tasks")) || [];
-      saved.forEach(task => createTask(task));
+
+      let savedTasks =
+        JSON.parse(localStorage.getItem("tasks")) || [];
+
+      savedTasks.forEach(task => {
+        createTask(task);
+      });
+
+      loadExpenses();
+      loadInvestments();
     };
 
-    // ADD TASK
     function addTask() {
-      let input = document.getElementById("taskInput");
+
+      let input =
+        document.getElementById("taskInput");
+
       let task = input.value.trim();
 
       if (task === "") return;
 
       createTask(task);
-      saveTask(task);
+
+      let tasks =
+        JSON.parse(localStorage.getItem("tasks")) || [];
+
+      tasks.push(task);
+
+      localStorage.setItem(
+        "tasks",
+        JSON.stringify(tasks)
+      );
 
       input.value = "";
     }
 
-    // CREATE TASK
     function createTask(task) {
+
       let li = document.createElement("li");
 
       li.innerHTML = `
         ${task}
-        <button class="delete" onclick="deleteTask(this, '${task}')">X</button>
+        <button class="delete"
+          onclick="deleteTask(this, '${task}')">
+          X
+        </button>
       `;
 
-      document.getElementById("taskList").appendChild(li);
+      document.getElementById("taskList")
+        .appendChild(li);
     }
 
-    // DELETE TASK
     function deleteTask(btn, task) {
+
       btn.parentElement.remove();
 
-      let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      let tasks =
+        JSON.parse(localStorage.getItem("tasks")) || [];
+
       tasks = tasks.filter(t => t !== task);
 
-      localStorage.setItem("tasks", JSON.stringify(tasks));
+      localStorage.setItem(
+        "tasks",
+        JSON.stringify(tasks)
+      );
     }
 
-    // SAVE TASK
-    function saveTask(task) {
-      let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    // ---------------- CALCULATOR ----------------
 
-      tasks.push(task);
-
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-    }
-
-    // CALCULATOR
     function calculate(operator) {
 
-      let num1 = Number(document.getElementById("num1").value);
-      let num2 = Number(document.getElementById("num2").value);
+      let num1 =
+        Number(document.getElementById("num1").value);
+
+      let num2 =
+        Number(document.getElementById("num2").value);
 
       let result = 0;
 
@@ -198,11 +283,197 @@
       }
 
       else if (operator === "/") {
-        result = num2 !== 0 ? num1 / num2 : "Cannot divide by 0";
+
+        if (num2 === 0) {
+          result = "Cannot divide by 0";
+        }
+
+        else {
+          result = num1 / num2;
+        }
       }
 
-      document.getElementById("result").innerText =
-        "Result: " + result;
+      document.getElementById("result")
+        .innerText = "Result: " + result;
+    }
+
+    // ---------------- EXPENSE TRACKER ----------------
+
+    let expenses = [];
+
+    function loadExpenses() {
+
+      expenses =
+        JSON.parse(localStorage.getItem("expenses")) || [];
+
+      expenses.forEach(exp => {
+        createExpense(exp.name, exp.amount);
+      });
+
+      updateExpenseTotal();
+    }
+
+    function addExpense() {
+
+      let name =
+        document.getElementById("expenseName").value.trim();
+
+      let amount =
+        Number(document.getElementById("expenseAmount").value);
+
+      if (name === "" || amount <= 0) return;
+
+      let expense = {
+        name: name,
+        amount: amount
+      };
+
+      expenses.push(expense);
+
+      localStorage.setItem(
+        "expenses",
+        JSON.stringify(expenses)
+      );
+
+      createExpense(name, amount);
+
+      updateExpenseTotal();
+
+      document.getElementById("expenseName").value = "";
+      document.getElementById("expenseAmount").value = "";
+    }
+
+    function createExpense(name, amount) {
+
+      let li = document.createElement("li");
+
+      li.innerHTML = `
+        ${name} - £${amount}
+        <button class="delete"
+          onclick="deleteExpense(this, '${name}')">
+          X
+        </button>
+      `;
+
+      document.getElementById("expenseList")
+        .appendChild(li);
+    }
+
+    function deleteExpense(btn, name) {
+
+      btn.parentElement.remove();
+
+      expenses =
+        expenses.filter(exp => exp.name !== name);
+
+      localStorage.setItem(
+        "expenses",
+        JSON.stringify(expenses)
+      );
+
+      updateExpenseTotal();
+    }
+
+    function updateExpenseTotal() {
+
+      let total = 0;
+
+      expenses.forEach(exp => {
+        total += exp.amount;
+      });
+
+      document.getElementById("totalExpense")
+        .innerText = "Total Expenses: £" + total;
+    }
+
+    // ---------------- INVESTMENT TRACKER ----------------
+
+    let investments = [];
+
+    function loadInvestments() {
+
+      investments =
+        JSON.parse(localStorage.getItem("investments")) || [];
+
+      investments.forEach(inv => {
+        createInvestment(inv.name, inv.amount);
+      });
+
+      updateInvestmentTotal();
+    }
+
+    function addInvestment() {
+
+      let name =
+        document.getElementById("investmentName").value.trim();
+
+      let amount =
+        Number(document.getElementById("investmentAmount").value);
+
+      if (name === "" || amount <= 0) return;
+
+      let investment = {
+        name: name,
+        amount: amount
+      };
+
+      investments.push(investment);
+
+      localStorage.setItem(
+        "investments",
+        JSON.stringify(investments)
+      );
+
+      createInvestment(name, amount);
+
+      updateInvestmentTotal();
+
+      document.getElementById("investmentName").value = "";
+      document.getElementById("investmentAmount").value = "";
+    }
+
+    function createInvestment(name, amount) {
+
+      let li = document.createElement("li");
+
+      li.innerHTML = `
+        ${name} - £${amount}
+        <button class="delete"
+          onclick="deleteInvestment(this, '${name}')">
+          X
+        </button>
+      `;
+
+      document.getElementById("investmentList")
+        .appendChild(li);
+    }
+
+    function deleteInvestment(btn, name) {
+
+      btn.parentElement.remove();
+
+      investments =
+        investments.filter(inv => inv.name !== name);
+
+      localStorage.setItem(
+        "investments",
+        JSON.stringify(investments)
+      );
+
+      updateInvestmentTotal();
+    }
+
+    function updateInvestmentTotal() {
+
+      let total = 0;
+
+      investments.forEach(inv => {
+        total += inv.amount;
+      });
+
+      document.getElementById("totalInvestment")
+        .innerText =
+        "Total Invested: £" + total;
     }
 
   </script>
